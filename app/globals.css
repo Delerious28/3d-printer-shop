@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 min-h-screen;
+}
+
+.gradient-bg {
+  background: radial-gradient(circle at 20% 20%, rgba(123,97,255,0.25), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(0,212,255,0.15), transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.05), transparent 25%),
+    linear-gradient(135deg, #0f172a 0%, #0b1020 100%);
+}
+
+.card {
+  @apply bg-slate-900/60 border border-slate-800 rounded-xl shadow-xl backdrop-blur;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 font-semibold text-white shadow hover:bg-brand/90 transition;
+}

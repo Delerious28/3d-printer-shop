@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  STAFF
+}
+
+enum ModelStatus {
+  UPLOADED
+  PROCESSING
+  READY
+}
+
+enum SupportsMode {
+  OFF
+  ON
+  AUTO
+}
+
+enum ShippingSpeed {
+  NORMAL
+  EXPRESS
+}
+
+enum OrderStatus {
+  NEW
+  PAID
+  REVIEW
+  APPROVED
+  NEEDS_CHANGES
+  QUEUED_FOR_PRINT
+  PRINTING
+  POST_PROCESSING
+  QUALITY_CHECK
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  passwordHash    String?
+  role            Role     @default(CUSTOMER)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime @default(now())
+  addresses       Address[]
+  modelFiles      ModelFile[]
+  orders          Order[]
+  sessions        Session[]
+  accounts        Account[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+  @@id([identifier, token])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  label     String
+  street    String
+  city      String
+  postal    String
+  country   String
+  isDefault Boolean  @default(false)
+}
+
+model Material {
+  id                String   @id @default(cuid())
+  name              String
+  description       String
+  basePriceCents    Int
+  machineHourRateCents Int
+  supportMultiplier Float @default(1.2)
+  densityGcm3       Float @default(1.24)
+  colors            Color[]
+  qualities         QualityPreset[]
+}
+
+model Color {
+  id         String   @id @default(cuid())
+  name       String
+  hex        String
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId String
+
+  @@unique([name, materialId])
+}
+
+model QualityPreset {
+  id           String   @id @default(cuid())
+  name         String
+  layerHeight  Float
+  speedMultiplier Float @default(1)
+  material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId   String
+
+  @@unique([name, materialId])
+}
+
+model PricingRule {
+  id                 String   @id @default(cuid())
+  expressMultiplier  Float
+  minOrderCents      Int
+  shippingBaseCents  Int
+  shippingExpressCents Int
+}
+
+model ModelFile {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  originalName String
+  storageKey   String
+  mimeType     String
+  sizeBytes    Int
+  status       ModelStatus @default(UPLOADED)
+  dimensionsX  Float?
+  dimensionsY  Float?
+  dimensionsZ  Float?
+  volumeMm3    Float?
+  thumbnailKey String?
+  createdAt    DateTime @default(now())
+  printConfigs PrintConfig[]
+}
+
+model PrintConfig {
+  id              String   @id @default(cuid())
+  modelFile       ModelFile @relation(fields: [modelFileId], references: [id], onDelete: Cascade)
+  modelFileId     String
+  material        Material @relation(fields: [materialId], references: [id])
+  materialId      String
+  color           Color @relation(fields: [colorId], references: [id])
+  colorId         String
+  quality         QualityPreset @relation(fields: [qualityId], references: [id])
+  qualityId       String
+  infillPercent   Int
+  supportsMode    SupportsMode
+  quantity        Int
+  shippingSpeed   ShippingSpeed
+  unitPriceCents  Int
+  totalPriceCents Int
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  status         OrderStatus @default(NEW)
+  subtotalCents  Int
+  shippingCents  Int
+  taxCents       Int
+  totalCents     Int
+  paymentProvider String
+  paymentId      String?
+  invoiceKey     String?
+  createdAt      DateTime @default(now())
+  items          OrderItem[]
+  statusHistory  OrderStatusHistory[]
+}
+
+model OrderItem {
+  id           String @id @default(cuid())
+  order        Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId      String
+  printConfig  PrintConfig @relation(fields: [printConfigId], references: [id])
+  printConfigId String
+  snapshotJson Json
+}
+
+model OrderStatusHistory {
+  id        String @id @default(cuid())
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  fromStatus OrderStatus?
+  toStatus  OrderStatus
+  note      String?
+  createdAt DateTime @default(now())
+}

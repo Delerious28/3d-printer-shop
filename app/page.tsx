@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Upload, CreditCard, Package } from "react-icons/fa6";
+import { FaArrowRight, FaUpload, FaCreditCard, FaBox } from "react-icons/fa6";
 
 const steps = [
-  { title: "Upload", desc: "Drop your STL/OBJ/3MF and get instant insights.", icon: Upload },
-  { title: "Configure", desc: "Pick material, color, quality, infill and supports.", icon: ArrowRight },
-  { title: "Pay", desc: "Securely pay with iDEAL via Stripe.", icon: CreditCard },
-  { title: "Receive", desc: "We print, finish and ship with tracking.", icon: Package }
+  { title: "Upload", desc: "Drop your STL/OBJ/3MF and get instant insights.", icon: FaUpload },
+  { title: "Configure", desc: "Pick material, color, quality, infill and supports.", icon: FaArrowRight },
+  { title: "Pay", desc: "Securely pay with iDEAL via Stripe.", icon: FaCreditCard },
+  { title: "Receive", desc: "We print, finish and ship with tracking.", icon: FaBox }
 ];
 
 const materials = [
@@ -35,7 +35,7 @@ export default function HomePage() {
               Start an order
             </Link>
             <Link className="inline-flex items-center gap-2 rounded-lg border border-slate-800 px-4 py-2" href="/materials">
-              View materials <ArrowRight className="h-4 w-4" />
+              View materials <FaArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

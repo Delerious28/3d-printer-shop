@@ -11,11 +11,11 @@ A monorepo-style Next.js application for Dutch 3D printing orders with uploads, 
 - three.js viewer via react-three-fiber
 
 ## Getting started
-1. Copy `.env.example` to `.env.local` and fill values.
+1. Copy `.env.example` to `.env.local` and fill values (use `db` as the PostgreSQL host when running against docker-compose services).
 2. Install dependencies: `npm install` (registry must be reachable).
 3. Run docker services: `docker compose up -d` (PostgreSQL, Redis, MailHog at :8025, MinIO at :9000/:9001).
 4. Apply migrations: `npx prisma migrate dev --name init`.
-5. Seed data: `npm run db:seed` (creates admin user + pricing/material seed).
+5. Seed data: `npm run db:seed` (creates admin user + pricing/material seed). Default admin credentials: `admin@gmail.com` / `admin123!`.
 6. Start dev server: `npm run dev` and open `http://localhost:3000`.
 7. Stripe webhooks: run `stripe listen --forward-to localhost:3000/api/webhooks` with `STRIPE_WEBHOOK_SECRET` set.
 
@@ -31,6 +31,8 @@ PostgreSQL, Redis, MailHog, and MinIO are provided. Local uploads default to `pu
 
 ## Email
 Configure SMTP host/user/pass in env to send verification, status updates, and notifications. In dev, you can point to Mailhog at `localhost:1025`.
+
+New accounts require email verification before login. The register flow sends a verification email; the included admin user is pre-verified in the seed data.
 
 ## Limitations
 - File analysis (dimensions/volume) is simplified and should be enhanced in production.

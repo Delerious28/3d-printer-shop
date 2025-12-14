@@ -116,16 +116,14 @@ model Material {
   densityGcm3       Float @default(1.24)
   colors            Color[]
   qualities         QualityPreset[]
-  printConfigs      PrintConfig[]
 }
 
 model Color {
-  id           String   @id @default(cuid())
-  name         String
-  hex          String
-  material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  materialId   String
-  printConfigs PrintConfig[]
+  id         String   @id @default(cuid())
+  name       String
+  hex        String
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId String
 
   @@unique([name, materialId])
 }
@@ -137,7 +135,6 @@ model QualityPreset {
   speedMultiplier Float @default(1)
   material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
   materialId   String
-  printConfigs PrintConfig[]
 
   @@unique([name, materialId])
 }

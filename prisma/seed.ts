@@ -80,8 +80,8 @@ async function main() {
     }
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@remoof.local";
-  const adminPassword = process.env.ADMIN_PASSWORD || "changeme123";
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@gmail.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "admin123!";
   const hash = await bcrypt.hash(adminPassword, 10);
   await prisma.user.upsert({
     where: { email: adminEmail },

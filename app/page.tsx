@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Upload, CreditCard, Package } from "react-icons/fa6";
+import { FaArrowRight, FaUpload, FaCreditCard, FaBoxOpen } from "react-icons/fa6";
 
 const steps = [
-  { title: "Upload", desc: "Drop your STL/OBJ/3MF and get instant insights.", icon: Upload },
-  { title: "Configure", desc: "Pick material, color, quality, infill and supports.", icon: ArrowRight },
-  { title: "Pay", desc: "Securely pay with iDEAL via Stripe.", icon: CreditCard },
-  { title: "Receive", desc: "We print, finish and ship with tracking.", icon: Package }
+  { title: "Upload", desc: "Drop your STL/OBJ/3MF and get instant insights.", icon: FaUpload },
+  { title: "Configure", desc: "Pick material, color, quality, infill and supports.", icon: FaArrowRight },
+  { title: "Pay", desc: "Securely pay with iDEAL via Stripe.", icon: FaCreditCard },
+  { title: "Receive", desc: "We print, finish and ship with tracking.", icon: FaBoxOpen }
 ];
 
 const materials = [

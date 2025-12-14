@@ -1,8 +1,6 @@
 import "./globals.css";
 import { ReactNode } from "react";
-import { Toaster } from "react-hot-toast";
-import { Providers } from "@/components/providers";
-import { CookieBanner } from "@/components/cookie-banner";
+import AppClientProviders from "@/components/AppClientProviders";
 
 export const metadata = {
   title: "Remoof 3D Printing Shop",
@@ -13,7 +11,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="gradient-bg">
-        <Providers>
+        <AppClientProviders>
           <div className="min-h-screen flex flex-col">
             <header className="sticky top-0 z-40 backdrop-blur bg-slate-950/70 border-b border-slate-800">
               <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
@@ -33,9 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               © {new Date().getFullYear()} Remoof. Crafted in the Netherlands.
             </footer>
           </div>
-        </Providers>
-        <CookieBanner />
-        <Toaster position="bottom-right" />
+        </AppClientProviders>
       </body>
     </html>
   );

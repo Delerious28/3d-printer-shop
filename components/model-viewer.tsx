@@ -1,6 +1,6 @@
 "use client";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Grid } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
@@ -45,7 +45,6 @@ export function ModelViewer({ src }: { src: string }) {
           <Suspense fallback={null}>
             <Model url={src} wireframe={wireframe} />
           </Suspense>
-          <Grid args={[10, 10]} position={[0, -0.5, 0]} />
           <OrbitControls />
         </Canvas>
       </div>

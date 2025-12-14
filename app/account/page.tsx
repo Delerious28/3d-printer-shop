@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSessionSafe } from "@/lib/get-session";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 export default async function AccountPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionSafe();
   if (!session?.user) return <div className="p-8">Please sign in.</div>;
   const orders = await prisma.order.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: "desc" } });
   const models = await prisma.modelFile.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: "desc" } });

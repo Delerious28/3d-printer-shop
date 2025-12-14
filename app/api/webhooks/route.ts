@@ -16,7 +16,20 @@ export async function POST(req: Request) {
     const session = event.data.object as any;
     const orderId = session.metadata?.orderId as string;
     if (orderId) {
-      await prisma.order.update({ where: { id: orderId }, data: { status: "PAID" } });
+      const order = await prisma.order.findUnique({ where: { id: orderId } });
+      await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          status: "PAID",
+          statusHistory: {
+            create: {
+              fromStatus: order?.status,
+              toStatus: "PAID",
+              note: "Stripe checkout completed"
+            }
+          }
+        }
+      });
     }
   }
   return NextResponse.json({ received: true });

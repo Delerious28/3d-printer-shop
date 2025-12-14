@@ -13,10 +13,11 @@ A monorepo-style Next.js application for Dutch 3D printing orders with uploads, 
 ## Getting started
 1. Copy `.env.example` to `.env.local` and fill values.
 2. Install dependencies: `npm install` (registry must be reachable).
-3. Run docker services: `docker compose up -d` (postgres, redis, mailhog optional).
+3. Run docker services: `docker compose up -d` (PostgreSQL, Redis, MailHog at :8025, MinIO at :9000/:9001).
 4. Apply migrations: `npx prisma migrate dev --name init`.
-5. Seed data: `npm run db:seed`.
+5. Seed data: `npm run db:seed` (creates admin user + pricing/material seed).
 6. Start dev server: `npm run dev` and open `http://localhost:3000`.
+7. Stripe webhooks: run `stripe listen --forward-to localhost:3000/api/webhooks` with `STRIPE_WEBHOOK_SECRET` set.
 
 ## Scripts
 - `npm run dev` - start Next.js
@@ -26,7 +27,7 @@ A monorepo-style Next.js application for Dutch 3D printing orders with uploads, 
 - `npm test` - runs vitest (pricing engine tests)
 
 ## Docker Compose
-PostgreSQL and Redis are provided. MinIO can be added by extending the compose file; local uploads default to `public/uploads`.
+PostgreSQL, Redis, MailHog, and MinIO are provided. Local uploads default to `public/uploads`; set `MINIO_*` env vars to switch to an S3-compatible bucket.
 
 ## Email
 Configure SMTP host/user/pass in env to send verification, status updates, and notifications. In dev, you can point to Mailhog at `localhost:1025`.

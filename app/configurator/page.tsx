@@ -5,6 +5,7 @@ import { ModelViewer } from "@/components/model-viewer";
 import toast from "react-hot-toast";
 
 interface Option { id: string; name: string; materialId?: string; layerHeight?: number }
+interface ModelInfo { id: string; storageKey: string; originalName: string }
 
 export default function ConfiguratorPage() {
   const params = useSearchParams();
@@ -13,16 +14,29 @@ export default function ConfiguratorPage() {
   const [options, setOptions] = useState<{ materials: Option[]; colors: Option[]; qualities: Option[] }>({ materials: [], colors: [], qualities: [] });
   const [selection, setSelection] = useState({ materialId: "", colorId: "", qualityId: "", infill: 20, supports: "AUTO", quantity: 1, shipping: "NORMAL" });
   const [price, setPrice] = useState<{ totalCents: number; breakdown?: any }>();
+  const [model, setModel] = useState<ModelInfo | null>(null);
 
   useEffect(() => {
     fetch("/api/options").then((res) => res.json()).then(setOptions);
   }, []);
 
   useEffect(() => {
+    if (!modelId) return;
+    fetch(`/api/models/${modelId}`).then(async (res) => {
+      if (!res.ok) {
+        toast.error("Unable to load model");
+        return;
+      }
+      const json = await res.json();
+      setModel(json);
+    });
+  }, [modelId]);
+
+  useEffect(() => {
     if (!modelId || !selection.materialId || !selection.colorId || !selection.qualityId) return;
     fetch("/api/price", { method: "POST", body: JSON.stringify({ modelFileId: modelId, ...selection, infillPercent: selection.infill, supportsMode: selection.supports, shippingSpeed: selection.shipping }) })
       .then((res) => res.json())
-      .then(setPrice);
+      .then((data) => setPrice(data));
   }, [modelId, selection]);
 
   const createCart = async () => {
@@ -36,7 +50,7 @@ export default function ConfiguratorPage() {
     <div className="mx-auto max-w-5xl px-6 py-12 grid md:grid-cols-2 gap-8">
       <div className="space-y-4">
         <h1 className="text-3xl font-bold">Configure print</h1>
-        <ModelViewer src={`/uploads/${modelId}.stl`} />
+        {model ? <ModelViewer src={`/uploads/${model.storageKey}`} /> : <div className="text-slate-400">Select a model to view.</div>}
       </div>
       <div className="card p-6 space-y-4">
         <div>
